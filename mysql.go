@@ -14,9 +14,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-const (
-	driver = "mysql"
-)
+const driver = "mysql"
 
 // MySQL test db (mysql) config
 type MySQL struct {
@@ -33,7 +31,7 @@ type MySQL struct {
 
 func (m *MySQL) openDB() error {
 	var err error
-	m.db, err = sql.Open("mysql", m.DataSource)
+	m.db, err = sql.Open(driver, m.DataSource)
 	return err
 }
 
@@ -118,7 +116,7 @@ func (m *MySQL) Prepare() error {
 	return nil
 }
 
-// CloseDB close db, drop the testing database according to DropDatabaseAfterTesting.
+// Close close db, drop the testing database according to DropDatabaseAfterTesting.
 func (m *MySQL) Close() error {
 	if m.db == nil {
 		return errors.New("db is nil, may never been opened")
