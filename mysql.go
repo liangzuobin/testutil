@@ -41,7 +41,7 @@ func (m *MySQL) dbScripts() []string {
 		steps = append(steps, fmt.Sprintf("DROP DATABASE IF EXISTS %s", m.Database))
 	}
 	return append(steps,
-		fmt.Sprintf("CREATE DATABASE %s", m.Database),
+		fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", m.Database),
 		fmt.Sprintf("USE %s", m.Database),
 		fmt.Sprintf("CREATE USER IF NOT EXISTS '%s'@'%%' IDENTIFIED BY '%s'", m.User, m.Pwd),
 		fmt.Sprintf("GRANT ALL PRIVILEGES ON %s TO '%s'@'%%'", m.Database, m.User),
