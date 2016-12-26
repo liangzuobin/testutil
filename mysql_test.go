@@ -16,9 +16,11 @@ var _ = Describe("test testutil", func() {
 				DataSource:               "root:@tcp(127.0.0.1:3306)/",
 				Database:                 fmt.Sprintf("test%d", time.Now().Unix()),
 				User:                     "liangzuobin",
+				UserHost:                 "%",
 				Pwd:                      "123",
 				ScriptFile:               "create_table.sql",
 				RestartMySQLFirst:        false,
+				DropUserAfterTesting:     true,
 				DropExistsDatabaseFirst:  true,
 				DropDatabaseAfterTesting: true,
 			}
@@ -97,6 +99,7 @@ var _ = Describe("test testutil", func() {
 			m.Pwd = "123"
 			m.ScriptFile = "create_table.sql"
 			m.RestartMySQLFirst = false
+			m.DropUserAfterTesting = false
 			m.DropExistsDatabaseFirst = true
 			m.DropDatabaseAfterTesting = true
 		})
@@ -121,6 +124,12 @@ var _ = Describe("test testutil", func() {
 
 		It("not drop data base after testing", func() {
 			m.DropDatabaseAfterTesting = false
+			Expect(m.Prepare()).NotTo(HaveOccurred())
+			Expect(m.Close()).NotTo(HaveOccurred())
+		})
+
+		It("drop user after testing", func() {
+			m.DropUserAfterTesting = true
 			Expect(m.Prepare()).NotTo(HaveOccurred())
 			Expect(m.Close()).NotTo(HaveOccurred())
 		})

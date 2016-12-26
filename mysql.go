@@ -22,9 +22,11 @@ type MySQL struct {
 	DataSource               string
 	Database                 string
 	User                     string
+	UserHost                 string
 	Pwd                      string
 	ScriptFile               string
 	RestartMySQLFirst        bool
+	DropUserAfterTesting     bool
 	DropExistsDatabaseFirst  bool
 	DropDatabaseAfterTesting bool
 }
@@ -37,13 +39,21 @@ func (m *MySQL) openDB() error {
 
 func (m *MySQL) dbScripts() []string {
 	steps := make([]string, 0, 5)
+
+	// dorp exists db
 	if m.DropExistsDatabaseFirst {
 		steps = append(steps, fmt.Sprintf("DROP DATABASE IF EXISTS %s", m.Database))
 	}
+
+	// create db / user if not exists and grant privileges
+	if len(m.UserHost) == 0 {
+		m.UserHost = "%"
+	}
 	return append(steps,
 		fmt.Sprintf("CREATE DATABASE IF NOT EXISTS %s", m.Database),
-		fmt.Sprintf("USE %s", m.Database),
-		fmt.Sprintf("CREATE USER IF NOT EXISTS '%s'@'%%' IDENTIFIED BY '%s'", m.User, m.Pwd),
+		fmt.Sprintf("USE %s", m.Database), // for test
+		fmt.Sprintf("CREATE USER IF NOT EXISTS '%s'@'%s' IDENTIFIED BY '%s'",
+			m.User, m.UserHost, m.Pwd),
 		fmt.Sprintf("GRANT ALL PRIVILEGES ON %s TO '%s'@'%%'", m.Database, m.User),
 	)
 }
@@ -121,12 +131,23 @@ func (m *MySQL) Close() error {
 	if m.db == nil {
 		return errors.New("db is nil, may never been opened")
 	}
+
+	// drop db
 	if m.DropDatabaseAfterTesting {
 		_, err := m.db.Exec("DROP DATABASE " + m.Database)
 		if err != nil {
 			return errors.Wrap(err, "drop database failed")
 		}
 	}
+
+	// drop user
+	if m.DropUserAfterTesting {
+		_, err := m.db.Exec("DROP USER '" + m.User + "'@'" + m.UserHost + "'")
+		if err != nil {
+			return errors.Wrap(err, "drop user failed")
+		}
+	}
+
 	return errors.Wrap(m.db.Close(), "close db failed")
 }
 
