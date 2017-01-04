@@ -51,7 +51,7 @@ var _ = Describe("test testutil", func() {
 
 		It("m.tableScript() with m.ScriptFile is abs path", func() {
 			By("m.ScriptFile == ''")
-			m.ScriptFile = "/Users/liangzuobin/Code/Go/src/testutil/create_table.sql"
+			m.ScriptFile = "/Users/liangzuobin/Code/Go/src/github.com/liangzuobin/testutil/create_table.sql"
 			scripts, err := m.tableScripts()
 			Expect(err).NotTo(HaveOccurred())
 			Expect(scripts).To(HaveLen(4))
@@ -71,7 +71,7 @@ var _ = Describe("test testutil", func() {
 			})
 
 			It("m.execScript() with valid script", func() {
-				script, err := m.execScripts([]string{"use test"})
+				script, err := m.execScripts([]string{"use mysql"})
 				Expect(err).To(BeNil())
 				Expect(script).To(BeZero())
 			})

@@ -54,7 +54,7 @@ func (m *MySQL) dbScripts() []string {
 		fmt.Sprintf("USE %s", m.Database), // for test
 		fmt.Sprintf("CREATE USER IF NOT EXISTS '%s'@'%s' IDENTIFIED BY '%s'",
 			m.User, m.UserHost, m.Pwd),
-		fmt.Sprintf("GRANT ALL PRIVILEGES ON %s TO '%s'@'%%'", m.Database, m.User),
+		fmt.Sprintf("GRANT ALL PRIVILEGES ON %s TO '%s'@'%s'", m.Database, m.User, m.UserHost),
 	)
 }
 
