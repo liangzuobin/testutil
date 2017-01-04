@@ -134,7 +134,7 @@ func (m *MySQL) Close() error {
 
 	// drop db
 	if m.DropDatabaseAfterTesting {
-		_, err := m.db.Exec("DROP DATABASE " + m.Database)
+		_, err := m.db.Exec("DROP DATABASE IF EXISTS " + m.Database)
 		if err != nil {
 			return errors.Wrap(err, "drop database failed")
 		}
@@ -142,7 +142,7 @@ func (m *MySQL) Close() error {
 
 	// drop user
 	if m.DropUserAfterTesting {
-		_, err := m.db.Exec("DROP USER '" + m.User + "'@'" + m.UserHost + "'")
+		_, err := m.db.Exec("DROP USER IF EXISTS '" + m.User + "'@'" + m.UserHost + "'")
 		if err != nil {
 			return errors.Wrap(err, "drop user failed")
 		}
